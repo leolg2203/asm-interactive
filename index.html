@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>ASM Interactivo</title>
+<style>
+  body { font-family: Arial; background:#f5f5f5; padding:20px; }
+  pre { background:#222; color:#eee; padding:20px; border-radius:10px; white-space:pre-wrap; }
+  .token { color:#8be9fd; cursor:pointer; }
+  #info { margin-top:20px; padding:15px; background:#fff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+</style>
+</head>
+<body>
+<h2>Programa ASM Interactivo</h2>
+<p>Haz clic en cualquier elemento marcado para ver su descripción.</p>
+
+<pre>
+<span class="token" data-desc="Nombre del archivo del programa.">PRIMER.ASM</span>
+
+<span class="token" data-desc="Directiva que indica el uso del modo 'ideal' de TASM, más estricto y estructurado.">ideal</span>
+<span class="token" data-desc="Ordena los segmentos de memoria (código, datos, pila) al estilo estándar de MS-DOS. Es lo recomendado para evitar problemas de compatibilidad.">dosseg</span>
+<span class="token" data-desc="Define un programa pequeño con un segmento de código y uno de datos.">model small</span>
+<span class="token" data-desc="Reserva 256 bytes para la pila.">stack 256</span>
+
+<span class="token" data-desc="Declara una constante cuyo valor es 10.">cte equ 10</span>
+
+<span class="token" data-desc="Inicio del segmento de datos, donde se declaran variables.">dataseg</span>
+  <span class="token" data-desc="'codsal' es un byte (db) que vale 0. La usaremos al final para decirle al sistema que el programa terminó bien (código 0).">codsal db 0</span>
+  <span class="token" data-desc="Variable sin inicializar.">dato1 db ?</span>
+  <span class="token" data-desc="Variable sin inicializar.">dato2 db ?</span>
+  <span class="token" data-desc="Aquí se guardará el resultado.">resul db ?</span>
+
+<span class="token" data-desc="Inicio del segmento de código, donde van las instrucciones.">codeseg</span>
+
+<span class="token" data-desc="Etiqueta que marca el inicio del programa.">inicio:</span>
+  <span class="token" data-desc="Carga la dirección del segmento de datos en AX.">mov ax, @data</span>
+  <span class="token" data-desc="Mueve el contenido de AX a DS para habilitar el acceso a variables.">mov ds, ax</span>
+
+  <span class="token" data-desc="Carga dato1 en AL.">mov al, [dato1]</span>
+  <span class="token" data-desc="Suma dato2 a AL.">add al, [dato2]</span>
+  <span class="token" data-desc="Suma la constante cte.">add al, cte</span>
+  <span class="token" data-desc="Guarda el resultado en resul.">mov [resul], al</span>
+
+<span class="token" data-desc="Etiqueta que marca el bloque de salida del programa.">salir:</span>
+  <span class="token" data-desc="Función 4Ch de INT 21h para terminar el programa.">mov ah, 04Ch</span>
+  <span class="token" data-desc="Código de retorno.">mov al, [codsal]</span>
+  <span class="token" data-desc="Interrupción para finalizar el programa.">int 21h</span>
+
+<span class="token" data-desc="Marca el fin del programa y su punto de entrada.">end inicio</span>
+</pre>
+
+<div id="info">Haz clic en un elemento para ver la descripción aquí.</div>
+
+<script>
+  const tokens = document.querySelectorAll('.token');
+  const info = document.getElementById('info');
+
+  tokens.forEach(t => {
+    t.addEventListener('click', () => {
+      info.textContent = t.dataset.desc;
+    });
+  });
+</script>
+
+</body>
+</html>
